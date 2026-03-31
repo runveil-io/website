@@ -86,7 +86,7 @@ export function Navigation() {
             WHITEPAPER
           </Link>
           <a
-            href="#"
+            href="https://github.com/runveil-io"
             className="flex items-center gap-1 px-3 py-1.5 font-mono text-xs text-muted-foreground transition-all duration-200 hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:outline-none"
           >
             GitHub
@@ -138,7 +138,7 @@ export function Navigation() {
                 WHITEPAPER
               </Link>
               <a
-                href="#"
+                href="https://github.com/runveil-io"
                 className="flex items-center gap-1 px-3 py-2 font-mono text-sm text-muted-foreground transition-all duration-200 hover:text-foreground"
               >
                 GitHub
