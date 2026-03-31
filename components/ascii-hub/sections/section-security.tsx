@@ -382,7 +382,7 @@ export function SectionSecurity() {
   const [activeTab, setActiveTab] = useState<"security" | "privacy">("security")
 
   return (
-    <div className="py-20 lg:py-32">
+    <div id="security-model" className="py-20 lg:py-32">
       {/* Full-width top bar with number + title */}
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <motion.div

@@ -362,7 +362,7 @@ export function SectionToken() {
   const isInView = useInView(ref, { once: true })
 
   return (
-    <div ref={ref} className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-32">
+    <div id="token-economics" ref={ref} className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-32">
       {/* Header with ghost number */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -259,7 +259,7 @@ function BootSequence() {
 export function SectionProtocol() {
   const section = techSections.find(s => s.id === "protocol-design")!
   return (
-    <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-32">
+    <div id="protocol-design" className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-32">
       {/* Section label with ghost number */}
       <motion.div
         initial={{ opacity: 0 }}
