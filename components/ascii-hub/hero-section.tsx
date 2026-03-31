@@ -209,6 +209,54 @@ export function HeroSection() {
               Clone the Repo
             </a>
           </div>
+
+          {/* Project Status */}
+          <div className="mt-2 w-full border border-border/50 p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <motion.div
+                className="h-2 w-2 bg-foreground/50"
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              />
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Project Status — Testnet
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 font-mono text-[11px]">
+              <div className="flex items-center gap-2 text-foreground/70">
+                <span className="text-foreground">[x]</span>
+                <span>Protocol design + whitepaper</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/70">
+                <span className="text-foreground">[x]</span>
+                <span>Core implementation (36/36 tests)</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/70">
+                <span className="text-foreground">[x]</span>
+                <span>E2E: Consumer → Relay → Provider</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/70">
+                <span className="text-foreground">[x]</span>
+                <span>Streaming + envelope encryption</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/30">
+                <span>[ ]</span>
+                <span>Multi-provider support</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/30">
+                <span>[ ]</span>
+                <span>On-chain settlement (Solana)</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/30">
+                <span>[ ]</span>
+                <span>TOKEN economics + Points</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground/30">
+                <span>[ ]</span>
+                <span>RBOB build system live</span>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         {/* Right side - Terminal Animation */}
