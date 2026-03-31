@@ -90,9 +90,9 @@ function TerminalAnimation() {
       {/* Terminal body */}
       <pre className="p-4 font-mono text-[10px] leading-relaxed text-foreground/80 md:text-xs">
         <code>
-{`┌──────────────────────────────────────┐
-│ veil@protocol ~ v1.0.0              │
-├──────────────────────────────────────┤`}
+{`+--------------------------------------+
+| veil@protocol ~ v1.0.0              |
++--------------------------------------+`}
         </code>
         {lines.map((line, i) => (
           <motion.div
@@ -101,21 +101,21 @@ function TerminalAnimation() {
             animate={{ opacity: 1 }}
             className="text-muted-foreground"
           >
-            {`│ ${line.padEnd(36)}│`}
+            {`| ${line.padEnd(36)}|`}
           </motion.div>
         ))}
         {lines.length < terminalLines.length && (
           <div className="text-muted-foreground">
-            {`│ > `}<span className="animate-blink">{"█"}</span>{" ".repeat(33)}{`│`}
+            {`| > `}<span className="animate-blink">{"█"}</span>{" ".repeat(33)}{`|`}
           </div>
         )}
         {lines.length >= terminalLines.length && (
           <div className="text-muted-foreground">
-            {`│ > _`}<span className="animate-blink">{"█"}</span>{" ".repeat(32)}{`│`}
+            {`| > _`}<span className="animate-blink">{"█"}</span>{" ".repeat(32)}{`|`}
           </div>
         )}
         <code>
-{`└──────────────────────────────────────┘`}
+{`+--------------------------------------+`}
         </code>
       </pre>
     </div>
@@ -191,7 +191,7 @@ export function HeroSection() {
               </span>
             </a>
             <a
-              href="#"
+              href="https://github.com/runveil-io/core"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 border border-border px-6 py-3 font-mono text-sm text-muted-foreground transition-all duration-200 hover:border-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:outline-none"

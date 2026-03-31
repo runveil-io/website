@@ -305,10 +305,10 @@ export function SectionBuild() {
         <p className="mt-2 font-mono text-xs text-muted-foreground">
           They were given rules. The rest emerged.
         </p>
-        <button className="mt-8 inline-flex items-center gap-2 bg-foreground px-8 py-3 font-mono text-sm text-background transition-all duration-200 hover:opacity-80 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none">
+        <a href="https://github.com/runveil-io" target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 bg-foreground px-8 py-3 font-mono text-sm text-background transition-all duration-200 hover:opacity-80 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none">
           Start Building
           <ArrowRight size={16} />
-        </button>
+        </a>
       </motion.div>
 
       {/* Bottom specs row */}
