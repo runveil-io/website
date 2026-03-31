@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Veil Protocol | Private Access. Permissionless AI.",
   description:
     "A decentralized AI inference protocol. Share idle AI capacity, earn rewards. Access top models with crypto. No KYC. No tracking. Open source.",
-  generator: "v0.app",
+  generator: "runveil.io",
   keywords: [
     "Veil Protocol",
     "decentralized AI",
