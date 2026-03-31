@@ -164,9 +164,19 @@ export function HeroSection() {
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="flex flex-col items-start gap-6"
         >
-          <div className="inline-flex items-center gap-2 border border-border px-3 py-1 font-mono text-xs text-muted-foreground">
-            <span className="inline-block h-1.5 w-1.5 bg-foreground" />
-            <span>DECENTRALIZED AI INFERENCE PROTOCOL</span>
+          <div className="flex items-center gap-3">
+            <div className="inline-flex items-center gap-2 border border-border px-3 py-1 font-mono text-xs text-muted-foreground">
+              <span className="inline-block h-1.5 w-1.5 bg-foreground" />
+              <span>DECENTRALIZED AI INFERENCE PROTOCOL</span>
+            </div>
+            <div className="inline-flex items-center gap-2 border border-foreground/30 px-3 py-1 font-mono text-[10px] text-foreground/50">
+              <motion.span
+                className="inline-block h-1.5 w-1.5 bg-foreground/50"
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              />
+              <span>TESTNET — BUILDING IN PUBLIC</span>
+            </div>
           </div>
 
           <h1 className="font-pixel-line text-5xl font-bold leading-none tracking-tight text-foreground text-balance md:text-7xl">

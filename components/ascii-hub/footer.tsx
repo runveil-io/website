@@ -117,6 +117,54 @@ export function Footer() {
           </motion.div>
         </div>
 
+        {/* Project Status */}
+        <div className="mt-12 border border-border/50 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <motion.div
+              className="h-2 w-2 bg-foreground/50"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            />
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              Project Status
+            </span>
+          </div>
+          <div className="grid gap-1 font-mono text-[10px] text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span className="text-foreground">[x]</span>
+              <span>Protocol design + whitepaper</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground">[x]</span>
+              <span>Core implementation (36/36 tests passing)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground">[x]</span>
+              <span>End-to-end verified: Consumer → Relay → Provider</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground">[x]</span>
+              <span>Streaming + envelope encryption + OAuth</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground/40">[ ]</span>
+              <span className="text-foreground/40">Multi-provider support</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground/40">[ ]</span>
+              <span className="text-foreground/40">On-chain settlement (Solana)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground/40">[ ]</span>
+              <span className="text-foreground/40">TOKEN economics + Points</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground/40">[ ]</span>
+              <span className="text-foreground/40">RBOB build system live</span>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <span className="font-mono text-[10px] text-muted-foreground">
