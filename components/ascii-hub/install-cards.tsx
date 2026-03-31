@@ -110,7 +110,7 @@ export function InstallCards() {
       <div className="grid gap-6 md:grid-cols-3">
         {/* Card 1: Provide & Earn */}
         <InstallCard
-          icon="⚡"
+          icon=">"
           title="PROVIDE & EARN"
           description="Share idle AI capacity. Earn USDC + TOKEN rewards."
           commandByPm={{
@@ -125,7 +125,7 @@ export function InstallCards() {
 
         {/* Card 2: Use AI */}
         <InstallCard
-          icon="🔒"
+          icon=">"
           title="USE AI"
           description="Access top AI models. No KYC. Pay with crypto."
           commandByPm={{
@@ -140,7 +140,7 @@ export function InstallCards() {
 
         {/* Card 3: Relay */}
         <InstallCard
-          icon="🌐"
+          icon=">"
           title="RUN A RELAY"
           description="Support the network. Earn TOKEN passively."
           command={`$ clawd setup
