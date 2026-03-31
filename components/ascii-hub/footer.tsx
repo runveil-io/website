@@ -13,9 +13,8 @@ const ASCII_LOGO = `
 
 const socialLinks = [
   { name: "GitHub", icon: Github, href: "#" },
-  { name: "Discord", icon: MessageCircle, href: "https://discord.gg/veil" },
-  { name: "Twitter", icon: Twitter, href: "https://twitter.com/veilprotocol" },
-  { name: "Telegram", icon: Send, href: "https://t.me/veilprotocol" },
+  { name: "Twitter", icon: Twitter, href: "https://x.com/runveil" },
+  { name: "Telegram", icon: Send, href: "https://t.me/runveil" },
 ]
 
 export function Footer() {
