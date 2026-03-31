@@ -14,7 +14,7 @@ const ASCII_LOGO = `
 const socialLinks = [
   { name: "GitHub", icon: Github, href: "https://github.com/runveil-io" },
   { name: "Twitter", icon: Twitter, href: "https://x.com/runveil_io" },
-  { name: "Telegram", icon: Send, href: "https://t.me/runveil" },
+  { name: "Telegram", icon: Send, href: "https://t.me/+XJ-ogZ9hBy44ZmFl" },
 ]
 
 export function Footer() {
