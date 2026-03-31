@@ -13,7 +13,7 @@ const ASCII_LOGO = `
 
 const socialLinks = [
   { name: "GitHub", icon: Github, href: "#" },
-  { name: "Twitter", icon: Twitter, href: "https://x.com/runveil" },
+  { name: "Twitter", icon: Twitter, href: "https://x.com/runveil_io" },
   { name: "Telegram", icon: Send, href: "https://t.me/runveil" },
 ]
 
