@@ -16,9 +16,9 @@ const flowSteps = [
 ]
 
 const stats = [
-  { label: "Providers Online", value: "1,247" },
-  { label: "Relays Active", value: "8,420" },
-  { label: "24h Volume", value: "$8.4K" },
+  { label: "Providers Online", value: "1 (testnet)" },
+  { label: "Relays Active", value: "1 (testnet)" },
+  { label: "Tests Passing", value: "36/36" },
   { label: "Models Available", value: "12" },
 ]
 
@@ -214,7 +214,7 @@ function BootSequence() {
     "[  0.003400] Escrow program: verified",
     "[  0.004200] Staking program: verified",
     "[  0.005100] Loading relay nodes...",
-    "[  OK  ] Protocol ready. 1,247 providers online.",
+    "[  OK  ] Protocol ready. Testnet operational.",
   ]
 
   useEffect(() => {

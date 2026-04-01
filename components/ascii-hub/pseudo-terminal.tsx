@@ -20,7 +20,7 @@ const COMMANDS: Record<string, string[]> = {
     "  veil       - ...",
   ],
   stats: [
-    "Providers: 1,247 | Relays: 8,420",
+    "Providers: 1 | Relays: 1 (testnet)",
     "24h Volume: $84,200 | Burned: 1.2M TOKEN",
     "Uptime: 99.97% | Settlements: 12,420",
   ],
@@ -31,14 +31,14 @@ const COMMANDS: Record<string, string[]> = {
     "Epoch: #4,217",
   ],
   providers: [
-    "Online: 1,247",
+    "Online: 1 (testnet)",
     "TEE-enabled: 41 (3.3%)",
     "WASM-only: 1,206 (96.7%)",
     "Avg uptime: 14h 23m",
   ],
   token: [
     "Supply: 1,000,000,000 (fixed)",
-    "Burned: 1,247,000",
+    "Burned: 0 (pre-TGE)",
     "Mining pool: 348,753,000",
     "Phase: Pre-TGE (Points)",
   ],

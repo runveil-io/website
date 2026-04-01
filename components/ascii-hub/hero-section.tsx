@@ -52,14 +52,14 @@ function useAsciiFrame(rows: number, cols: number, enabled: boolean) {
 function TerminalAnimation() {
   const [lines, setLines] = useState<string[]>([])
   const terminalLines = [
-    "> initializing veil_network...",
-    "> loading protocol modules...",
-    "> providers online: 1,247   [OK]",
-    "> relay nodes: 8,420        [OK]",
-    "> surge price: 0.42x        [OK]",
-    "> escrow contract: immutable[OK]",
-    "> wasm sandbox: verified    [OK]",
-    "> status: OPERATIONAL",
+    '> claude "explain quantum computing"',
+    '  ⚠ API rate limit reached.',
+    '  Switching to Veil network...',
+    '  ✓ Provider found (latency: 45ms)',
+    '  ✓ Encrypted with X25519',
+    '  Quantum computing uses qubits...',
+    '  Cost: $0.003 (142 tokens)',
+    '  Provider: anonymous            [OK]',
   ]
 
   useEffect(() => {
@@ -180,14 +180,13 @@ export function HeroSection() {
           </div>
 
           <h1 className="font-pixel-line text-5xl font-bold leading-none tracking-tight text-foreground text-balance md:text-7xl">
-            Private Access.
+            AI quota ran out?
             <br />
-            <span className="text-muted-foreground">Permissionless AI.</span>
+            <span className="text-muted-foreground">Use someone else&apos;s.</span>
           </h1>
 
           <p className="max-w-prose font-mono text-sm leading-relaxed text-muted-foreground md:text-base">
-            Share idle AI capacity, earn rewards. Access top models with crypto.
-            No KYC. No tracking. Open source protocol.
+            Veil connects you to idle AI capacity worldwide. Pay per token. No subscription needed.
           </p>
 
           <div className="flex flex-col items-start gap-4 sm:flex-row">
@@ -195,18 +194,16 @@ export function HeroSection() {
               href="#protocol-design"
               className="group flex items-center gap-2 border border-foreground bg-foreground px-6 py-3 font-mono text-sm text-background transition-all duration-200 hover:bg-transparent hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:outline-none"
             >
-              Explore the Protocol
+              Use AI
               <span className="transition-transform duration-200 group-hover:translate-x-1">
-                {"->"}
+                {"→"}
               </span>
             </a>
             <a
-              href="https://github.com/runveil-io/core"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#network-install"
               className="flex items-center gap-2 border border-border px-6 py-3 font-mono text-sm text-muted-foreground transition-all duration-200 hover:border-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:outline-none"
             >
-              Clone the Repo
+              Share & Earn →
             </a>
           </div>
 

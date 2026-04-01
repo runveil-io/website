@@ -18,35 +18,35 @@ export const techSections: TechSection[] = [
     description:
       "Three roles. One network. No central authority. Providers share idle AI capacity through relays. Consumers access models anonymously. Everything settles on Solana.",
     ascii: `
-┌─────────────────────────────────┐
-│         PROTOCOL ARCH           │
-│                                 │
-│  CONSUMER       RELAY    PROVIDER
-│  ┌──────┐    ┌────────┐  ┌─────┐
-│  │clawd │───>│ BLIND  │─>│WASM │
-│  │ USDC │    │FORWARD │  │SAND │
-│  │ pay  │    │+ID STRIP│ │ BOX │
-│  └──────┘    └───┬────┘  └─────┘
-│                  │              │
-│         ┌────────┴────────┐    │
-│         │  SOLANA CHAIN   │    │
-│         │Registry│Escrow  │    │
-│         │Staking │Token   │    │
-│         └─────────────────┘    │
-└─────────────────────────────────┘`,
+┌─────────────────────────────────────┐
+│       YOUR REQUEST JOURNEY          │
+│                                     │
+│  YOU          RELAY       PROVIDER  │
+│  ┌──────┐  ┌─────────┐  ┌───────┐  │
+│  │prompt│─>│ sees YOU │─>│ sees  │  │
+│  │encryp│  │ can't    │  │prompt │  │
+│  │ ted  │  │read it   │  │not YOU│  │
+│  └──────┘  └────┬────┘  └───────┘  │
+│                 │                   │
+│      ┌──────────┴──────────┐       │
+│      │    SOLANA CHAIN     │       │
+│      │  payment settles    │       │
+│      │  nobody sees both   │       │
+│      └─────────────────────┘       │
+└─────────────────────────────────────┘`,
     specs: [
-      { label: "Roles", value: "Provider / Consumer / Relay" },
-      { label: "Settlement", value: "Optimistic (Solana)" },
+      { label: "Cost", value: "~$0.003 per message" },
+      { label: "Latency", value: "+50ms vs direct API" },
+      { label: "Privacy", value: "Nobody sees both who and what" },
       { label: "Encryption", value: "X25519 + ChaCha20" },
-      { label: "Transport", value: "QUIC (outbound only)" },
     ],
     commands: [
       "$ veil status",
       "Protocol: v1.0.0 | Network: MAINNET",
       "$ veil providers --count",
-      "Online: 1,247 | TEE: 41 (3.3%)",
+      "Online: 1 (testnet) | TEE: 0",
       "$ veil relays --count",
-      "Active: 8,420 relays",
+      "Active: 1 relay (testnet)",
     ],
   },
   {

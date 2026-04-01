@@ -144,7 +144,7 @@ export function SectionNetwork() {
   const [activeTab, setActiveTab] = useState(0)
 
   const metrics = [
-    { label: "Nodes Online", value: "1,247/8,420", pct: 15 },
+    { label: "Nodes Online", value: "2 (testnet)", pct: 100 },
     { label: "Throughput", value: "Adaptive", pct: 75 },
     { label: "Latency p99", value: "<50ms", pct: 12 },
     { label: "Packet Loss", value: "0.001%", pct: 1 },

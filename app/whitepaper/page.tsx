@@ -14,14 +14,17 @@ const sections = [
   { id: "security-model", number: "5", title: "Security Model" },
   { id: "anti-detection", number: "6", title: "Anti-Detection" },
   { id: "pricing-engine", number: "7", title: "Pricing Engine" },
-  { id: "settlement", number: "8", title: "Settlement" },
-  { id: "token-economics", number: "9", title: "Token Economics" },
-  { id: "build-protocol", number: "10", title: "Build Protocol — RBOB" },
-  { id: "wallet-onboarding", number: "11", title: "Wallet & Onboarding" },
-  { id: "roadmap", number: "12", title: "Roadmap" },
-  { id: "related-work", number: "13", title: "Related Work" },
-  { id: "conclusion", number: "14", title: "Conclusion" },
-  { id: "references", number: "15", title: "References" },
+  { id: "metering-billing", number: "8", title: "Metering & Billing" },
+  { id: "settlement", number: "9", title: "Settlement" },
+  { id: "task-lifecycle", number: "10", title: "Task Lifecycle" },
+  { id: "consumer-integration", number: "11", title: "Consumer Integration" },
+  { id: "token-economics", number: "12", title: "Token Economics" },
+  { id: "build-protocol", number: "13", title: "Build Protocol — RBOB" },
+  { id: "wallet-onboarding", number: "14", title: "Wallet & Onboarding" },
+  { id: "roadmap", number: "15", title: "Roadmap" },
+  { id: "related-work", number: "16", title: "Related Work" },
+  { id: "conclusion", number: "17", title: "Conclusion" },
+  { id: "references", number: "18", title: "References" },
 ]
 
 function TableOfContents() {
@@ -105,7 +108,7 @@ export default function WhitepaperPage() {
             <ArrowLeft size={14} />
             <span>Back to Home</span>
           </Link>
-          <span className="font-mono text-xs text-muted-foreground">Whitepaper v1.0</span>
+          <span className="font-mono text-xs text-muted-foreground">Whitepaper v1.1</span>
         </div>
       </header>
 
@@ -130,7 +133,7 @@ export default function WhitepaperPage() {
 {`Veil Protocol: A Decentralized AI Inference Network
 with Verifiable Privacy and Market-Driven Pricing
 
-Version 1.0 — 2026`}
+Version 1.1 — April 2026`}
             </pre>
           </motion.div>
         </div>
@@ -612,10 +615,157 @@ surge = EMA(demand / aggregate_capacity)
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 8: SETTLEMENT                                           */}
+            {/* CHAPTER 8: METERING & BILLING                                   */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="settlement" number="8" title="Settlement">
-              <h3 className="mb-3 font-bold text-foreground">8.1 Optimistic Model</h3>
+            <Section id="metering-billing" number="8" title="Metering & Billing">
+              <h3 className="mb-3 font-bold text-foreground">8.1 The Metering Problem</h3>
+              <p className="mb-4">
+                Every inference request must answer four questions: How many tokens were consumed?
+                How much should the consumer pay? How is revenue distributed? Who verifies the numbers?
+                Veil Protocol solves this with provider-side metering, relay witnessing, and on-chain
+                challenge mechanisms.
+              </p>
+              <p className="mb-6">
+                The core challenge is that different AI APIs report usage in incompatible formats.
+                Anthropic, OpenAI, and Google each use different field names and structures.
+                Veil normalizes all usage data into a canonical format before pricing and settlement.
+              </p>
+
+              <h3 className="mb-3 font-bold text-foreground">8.2 Metering Architecture</h3>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|                  METERING FLOW                       |
++------------------------------------------------------+
+|                                                      |
+|  Provider --> AI API --> Response + usage             |
+|      |                                               |
+|      +-- Extract usage from API response             |
+|      +-- Normalize to canonical format               |
+|      +-- Sign usage data                             |
+|      |                                               |
+|      +-------> Send to Relay (usage + signature)     |
+|      |              |                                |
+|      |         Relay verifies signature              |
+|      |         Relay generates witness               |
+|      |         Relay stores in local DB              |
+|      |              |                                |
+|      |         Accumulate >= $1                      |
+|      |              |                                |
+|      |         Batch settlement                      |
+|      |         (Day 1: direct USDC transfer)         |
+|      |         (Stage 2+: on-chain Escrow)           |
+|      |                                               |
+|      +-------> Send to Consumer (encrypted)          |
+|                Consumer verifies locally              |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">8.3 Usage Normalization</h3>
+              <p className="mb-4">
+                Providers extract token counts from API responses and normalize them into a
+                canonical format. This abstraction layer handles field name differences across
+                all major AI providers:
+              </p>
+              <CodeBlock>
+{`NormalizedUsage {
+  input: number      // prompt tokens (incl. system prompt)
+  output: number     // completion tokens
+  cacheRead: number  // cache-hit input tokens
+  cacheWrite: number // cache-creation input tokens
+  total: number      // input + output
+}
+
+Normalization Map:
++-----------+----------------+-------------------+--------------+
+| Provider  | input          | output            | cacheRead    |
++-----------+----------------+-------------------+--------------+
+| Anthropic | input_tokens   | output_tokens     | cache_read_* |
+| OpenAI    | prompt_tokens  | completion_tokens | cached_tkns  |
+| Google    | promptTokenCt  | candidateTokenCt  | cachedCntTCt |
++-----------+----------------+-------------------+--------------+`}
+              </CodeBlock>
+              <p className="mb-6">
+                For streaming responses, token counts arrive in the final chunk or stream-end event.
+                Providers must wait for stream completion before submitting usage to the relay.
+                When APIs do not return usage data (private deployments, legacy APIs), providers
+                use local tokenizer estimation, marked as estimated with a &plusmn;10% challenge threshold.
+              </p>
+
+              <h3 className="mb-3 font-bold text-foreground">8.4 Pricing Formula</h3>
+              <CodeBlock>
+{`consumer_cost = (input_tokens  x model_input_price
+              + output_tokens x model_output_price) / 1,000,000
+
+Veil Price = Official API Price x discount_ratio
+
+  Day 1:  discount_ratio = 0.50  (50% of official)
+  Later:  Surge engine adjusts   (0.30 - 0.80)
+
+Cache Token Pricing:
+  cache_read_price  = input_price x 0.10  (90% discount)
+  cache_write_price = input_price x 1.25  (25% premium)
+
+Incentive: Providers maintain caches to reduce their
+API costs. Consumers benefit from lower cache-read rates.
+Market naturally optimizes for cache efficiency.`}
+              </CodeBlock>
+
+              <h3 className="mb-3 font-bold text-foreground">8.5 Provider Cost Structures</h3>
+              <p className="mb-4">
+                The protocol does not differentiate between provider cost models. Pricing is
+                uniform per-token. How providers source their capacity is their own concern:
+              </p>
+              <ul className="mb-6 list-inside list-disc">
+                <li className="mb-2"><strong className="text-foreground">Subscription Providers</strong>: Fixed monthly fee ($20/month), near-zero marginal cost until usage limits. Higher margins but account suspension risk.</li>
+                <li className="mb-2"><strong className="text-foreground">API Providers</strong>: Per-token cost, linear pricing. Lower margins but stable and predictable. No suspension risk.</li>
+              </ul>
+              <p className="mb-6">
+                The market self-balances: subscription providers offer better margins but carry
+                risk; API providers offer reliability but thinner margins. Both coexist and serve
+                different demand profiles.
+              </p>
+
+              <h3 className="mb-3 font-bold text-foreground">8.6 Settlement Progression</h3>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|              SETTLEMENT PROGRESSION                   |
++------------------------------------------------------+
+|                                                      |
+|  Day 1:   Provider reports usage                     |
+|           Relay records witness (SQLite)              |
+|           Direct USDC transfer on accumulation        |
+|           Trust model: Relay operator                 |
+|                                                      |
+|  Stage 1: + Consumer local verification              |
+|           + Price table on-chain                      |
+|           Trust model: Relay + Consumer audit         |
+|                                                      |
+|  Stage 2: + On-chain Escrow + fraud proofs           |
+|           Trust model: Trustless                      |
+|                                                      |
+|  Stage 3: + Surge dynamic pricing + DAO governance   |
+|           Trust model: Fully decentralized            |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">8.7 Anti-Fraud Mechanisms</h3>
+              <p className="mb-4">
+                Three fraud vectors are addressed:
+              </p>
+              <ul className="mb-4 list-inside list-disc">
+                <li className="mb-2"><strong className="text-foreground">Provider over-reports usage</strong>: Consumer re-calculates locally with tokenizer. Discrepancy {">"}10% triggers challenge. Provider stake slashed 50%.</li>
+                <li className="mb-2"><strong className="text-foreground">Provider under-reports usage</strong>: Relay witness does not match provider report. Relay refuses to sign witness. No settlement without witness.</li>
+                <li className="mb-2"><strong className="text-foreground">Relay tampers with usage</strong>: Provider{"'"} original usage is signed. Consumer can verify provider signature against relay-submitted data. On-chain challenge available.</li>
+              </ul>
+            </Section>
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* CHAPTER 9: SETTLEMENT                                           */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <Section id="settlement" number="9" title="Settlement">
+              <h3 className="mb-3 font-bold text-foreground">9.1 Optimistic Model</h3>
               <p className="mb-4">
                 Veil Protocol uses optimistic settlement—transactions are assumed valid unless challenged.
                 This reduces on-chain overhead dramatically: only one witness per batch is submitted,
@@ -627,7 +777,7 @@ surge = EMA(demand / aggregate_capacity)
                 rare cases where disputes arise.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">8.2 Settlement Flow</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.2 Settlement Flow</h3>
               <AsciiDiagram>
 {`+------------------------------------------------------+
 |                  SETTLEMENT FLOW                     |
@@ -651,7 +801,7 @@ surge = EMA(demand / aggregate_capacity)
 +------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">8.3 Fraud Proofs</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.3 Fraud Proofs</h3>
               <p className="mb-4">
                 Three categories of fraud can be proven on-chain:
               </p>
@@ -665,7 +815,7 @@ surge = EMA(demand / aggregate_capacity)
                 Watchtowers earn 30% of slashed amounts as incentive.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">8.4 Escalating Slash</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.4 Escalating Slash</h3>
               <CodeBlock>
 {`Slash Schedule (per provider):
 
@@ -682,17 +832,325 @@ Cooldown: 90 days between offense levels`}
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 9: TOKEN ECONOMICS                                      */}
+            {/* CHAPTER 10: TASK LIFECYCLE                                       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="token-economics" number="9" title="Token Economics">
-              <h3 className="mb-3 font-bold text-foreground">9.1 Three Phases</h3>
+            <Section id="task-lifecycle" number="10" title="Task Lifecycle">
+              <h3 className="mb-3 font-bold text-foreground">10.1 Simple vs. Multi-Turn Tasks</h3>
+              <p className="mb-4">
+                Simple inference requests involve a single API call: one prompt in, one response out.
+                But real-world usage demands more. A consumer may trigger a complex task that requires
+                the provider to make 10-20 internal API calls—tool use, multi-step reasoning, iterative
+                refinement. The task lifecycle system manages both modes transparently.
+              </p>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|               TASK TYPE COMPARISON                   |
++------------------------------------------------------+
+|                                                      |
+|  SIMPLE TASK (1 API call):                           |
+|  Consumer --> Relay --> Provider --> AI API (1x)      |
+|  Consumer <-- Relay <-- Provider <-- Response         |
+|                                                      |
+|  MULTI-TURN TASK (N API calls):                      |
+|  Consumer --> Relay --> Provider --> AI API #1        |
+|                                     AI API #2        |
+|                                     AI API #3        |
+|                                     ...              |
+|                                     AI API #N        |
+|  Consumer <-- Relay <-- Provider <-- Final Response   |
+|                                                      |
+|  Consumer sees 1 request, 1 response.                |
+|  Provider's internal calls are invisible.            |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">10.2 Budget Pre-Authorization</h3>
+              <p className="mb-4">
+                Consumers declare their willingness to pay upfront. This prevents runaway costs on
+                complex tasks and gives providers clear boundaries:
+              </p>
+              <CodeBlock>
+{`TaskRequest {
+  request_id: string
+  model: string
+  messages: Message[]
+
+  budget: {
+    max_cost_usdc: number    // e.g. $0.50
+    max_api_calls: number    // default 50
+    max_duration_ms: number  // default 300000 (5 min)
+  }
+}
+
+Provider behavior:
+  cost reaches 80% of budget --> progress notification
+  cost reaches 100%          --> stop, return partial result
+  api_calls reaches limit    --> stop, return partial result
+  duration exceeds limit     --> stop, return partial result`}
+              </CodeBlock>
+
+              <h3 className="mb-3 font-bold text-foreground">10.3 Heartbeat Probes</h3>
+              <p className="mb-4">
+                Long-running tasks risk silent failure—a provider may crash without sending an error
+                signal. The relay monitors data flow and sends heartbeat probes when silence is detected:
+              </p>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|                 PROBE PROTOCOL                       |
++------------------------------------------------------+
+|                                                      |
+|  Config:                                             |
+|    silence_threshold = 30 seconds                    |
+|    probe_timeout     = 10 seconds                    |
+|    max_failures      = 2 consecutive                 |
+|                                                      |
+|  Case A: Normal (data flowing)                       |
+|    chunks arrive --> reset timer --> no probe         |
+|                                                      |
+|  Case B: Silent but alive                            |
+|    30s silence --> probe --> ack(busy, 2/10 calls)    |
+|    --> reset timer, notify consumer of progress      |
+|                                                      |
+|  Case C: Rate limited                                |
+|    30s silence --> probe --> ack(rate_limited)        |
+|    --> pause billing, wait or trigger failover       |
+|                                                      |
+|  Case D: Dead                                        |
+|    30s silence --> probe #1 --> 10s timeout           |
+|                --> probe #2 --> 10s timeout           |
+|    --> declare dead, stop billing, trigger failover  |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">10.4 Probe Sequence Diagram</h3>
+              <AsciiDiagram>
+{`Consumer          Relay              Provider          AI API
+   |                |                    |                |
+   |-- request ---->|-- request -------->|-- API #1 ----->|
+   |                |                    |<-- response ---|
+   |                |                    |-- API #2 ----->|
+   |                |                    |  (processing)  |
+   |                |  [30s silence]     |                |
+   |                |-- probe ---------->|                |
+   |                |<-- ack (busy,2/10) |                |
+   |<-- progress ---|                    |                |
+   |                |                    |<-- response ---|
+   |                |                    |-- API #3 ----->|
+   |                |                    |                |
+   |                |  [30s silence]     |                |
+   |                |-- probe #1 ------->|    (dead)      |
+   |                |    [10s timeout]   |                |
+   |                |-- probe #2 ------->|                |
+   |                |    [10s timeout]   |                |
+   |                |  [DEAD]            |                |
+   |<-- error ------|                    |                |
+   |                |-- failover ------->  (new Provider)`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">10.5 Interruption Billing</h3>
+              <p className="mb-4">
+                When tasks are interrupted—whether by budget limits, provider failure, or network
+                issues—billing follows the principle of paying only for consumed resources:
+              </p>
+              <CodeBlock>
+{`Normal completion:
+  cost = sum(all API calls input_tokens) x price_input
+       + sum(all API calls output_tokens) x price_output
+
+Budget exceeded:
+  cost = actual accumulated cost (<= max_cost_usdc)
+  consumer receives partial result
+
+Provider death:
+  cost = input_tokens(processed) x price_input
+       + output_tokens(received chunks) x price_output
+  probe costs: provider's responsibility (not billed)
+  undelivered API calls: provider absorbs cost
+
+Stream interruption:
+  stream_start --> chunks --> disconnect
+  --> relay waits 30s + 2 probes --> declare interrupted
+  --> bill based on received chunks only
+  --> generate incomplete witness`}
+              </CodeBlock>
+
+              <h3 className="mb-3 font-bold text-foreground">10.6 Provider Failover</h3>
+              <p className="mb-4">
+                When a provider becomes unavailable mid-task, the relay orchestrates automatic
+                failover to maintain service continuity:
+              </p>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|                 FAILOVER FLOW                        |
++------------------------------------------------------+
+|                                                      |
+|  Original Provider unavailable                       |
+|      |                                               |
+|      +-- Consumer has remaining budget?              |
+|      |     No  --> return partial result + reason     |
+|      |     Yes |                                     |
+|      |         v                                     |
+|      +-- Other Providers online?                     |
+|      |     No  --> return partial + "no providers"    |
+|      |     Yes |                                     |
+|      |         v                                     |
+|      +-- Transfer context to new Provider            |
+|            |                                         |
+|            +-- Simple task: re-send original request |
+|            +-- Multi-turn: carry partial result      |
+|                 as context, adjust remaining budget  |
+|            |                                         |
+|            +-- New Provider continues                |
+|            +-- Max 3 failovers per request           |
+|                                                      |
+|  Failover triggers:                                  |
+|    - provider_dead (2 probe failures)                |
+|    - provider_rate_limited                           |
+|    - provider_error                                  |
+|    - timeout (max_duration_ms exceeded)              |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">10.7 Provider Reliability Scoring</h3>
+              <p className="mb-4">
+                Probe and failover data feeds into a reliability scoring system that influences
+                future provider selection:
+              </p>
+              <CodeBlock>
+{`ProviderReliability {
+  total_tasks: number
+  completed_tasks: number
+  failed_tasks: number
+  avg_probe_response_ms: number
+  probe_failure_rate: number
+  failover_rate: number
+  reliability_score: 0-100
+}
+
+Scoring impact:
+  - High score: priority in provider selection
+  - Low score: restricted from multi-turn tasks
+  - 3 consecutive failovers: 30-minute suspension
+  - Score recovers over time with good performance`}
+              </CodeBlock>
+            </Section>
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* CHAPTER 11: CONSUMER INTEGRATION                                 */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <Section id="consumer-integration" number="11" title="Consumer Integration">
+              <h3 className="mb-3 font-bold text-foreground">11.1 Local Gateway Architecture</h3>
+              <p className="mb-4">
+                The Veil consumer runs as a local HTTP gateway on localhost:4000, fully compatible
+                with the LiteLLM/OpenAI API protocol. Any application that speaks the OpenAI API
+                format—Cursor, VS Code Copilot, custom scripts—can use Veil without code changes.
+                Just point the base URL to localhost:4000.
+              </p>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|              CONSUMER GATEWAY                        |
++------------------------------------------------------+
+|                                                      |
+|  Your App / IDE / Script                             |
+|      |                                               |
+|      | POST /v1/chat/completions                     |
+|      | Authorization: Bearer <local-key>             |
+|      v                                               |
+|  +------------------------------------------------+  |
+|  |  localhost:4000  (Veil Consumer Gateway)       |  |
+|  |                                                |  |
+|  |  Endpoints:                                    |  |
+|  |    POST /v1/chat/completions  (inference)      |  |
+|  |    GET  /v1/models            (model list)     |  |
+|  |    GET  /health               (status)         |  |
+|  |                                                |  |
+|  |  Under the hood:                               |  |
+|  |    1. Encrypt prompt with Provider pubkey      |  |
+|  |    2. Sign request with Consumer key           |  |
+|  |    3. Forward via WebSocket to Relay           |  |
+|  |    4. Relay routes to Provider                 |  |
+|  |    5. Decrypt response, return as OpenAI fmt   |  |
+|  +------------------------------------------------+  |
+|                                                      |
+|  Privacy: Request content never leaves your machine  |
+|  in plaintext. Only the Provider can decrypt.        |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">11.2 Seamless Failover</h3>
+              <p className="mb-4">
+                OpenClaw (the consumer CLI) natively supports LiteLLM providers. The Veil gateway
+                integrates as a fallback provider. When your direct API quota runs out, traffic
+                automatically routes through Veil—no user intervention required:
+              </p>
+              <AsciiDiagram>
+{`+------------------------------------------------------+
+|            AUTOMATIC FAILOVER FLOW                   |
++------------------------------------------------------+
+|                                                      |
+|  Normal operation:                                   |
+|    App --> Direct API (Anthropic/OpenAI)              |
+|                                                      |
+|  API quota exhausted:                                |
+|    App --> Direct API --> 429 Rate Limited            |
+|        |                                             |
+|        +-- OpenClaw detects 429                      |
+|        +-- Auto-failover to localhost:4000 (Veil)    |
+|        +-- Request encrypted + routed via Relay      |
+|        +-- Response returned in same format          |
+|        +-- User sees no interruption                 |
+|                                                      |
+|  "API quota ran out" scenario:                       |
+|    Monthly $20 subscription used up on the 15th      |
+|    --> Veil becomes primary for remaining days       |
+|    --> Pay per-token at 50% of official rate         |
+|    --> Resume direct API when quota refreshes        |
+|                                                      |
++------------------------------------------------------+`}
+              </AsciiDiagram>
+
+              <h3 className="mb-3 font-bold text-foreground">11.3 Setup</h3>
+              <CodeBlock>
+{`# Install and start Veil consumer gateway
+npx veil init && veil start
+
+# Gateway now running on localhost:4000
+# Add to OpenClaw as LiteLLM provider
+openclaw onboard --auth-choice litellm-api-key
+
+# Done. OpenClaw will auto-failover when needed.
+# No configuration changes to your IDE or scripts.`}
+              </CodeBlock>
+
+              <h3 className="mb-3 font-bold text-foreground">11.4 Streaming Support</h3>
+              <p className="mb-4">
+                The gateway supports full SSE streaming, translating encrypted provider chunks
+                into standard OpenAI stream format in real-time. Each chunk is individually
+                encrypted and decrypted—the relay never sees plaintext content, even during streaming.
+              </p>
+              <p>
+                The consumer gateway is stateless. No data is persisted locally. Restart it anytime
+                without data loss. Keys are stored in the OS secure enclave (Keychain on macOS,
+                Credential Manager on Windows, libsecret on Linux).
+              </p>
+            </Section>
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* CHAPTER 12: TOKEN ECONOMICS                                      */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <Section id="token-economics" number="12" title="Token Economics">
+              <h3 className="mb-3 font-bold text-foreground">12.1 Three Phases</h3>
               <ul className="mb-6 list-inside list-disc">
                 <li className="mb-2"><strong className="text-foreground">Phase 0 (M0-M3)</strong>: Points + USDC. Providers earn USDC (80%) + Points. No token yet.</li>
                 <li className="mb-2"><strong className="text-foreground">Phase 1 (M4-M6)</strong>: TGE. Points convert to TOKEN. Elastic release begins.</li>
                 <li className="mb-2"><strong className="text-foreground">Phase 2 (M6+)</strong>: Full tokenomics. Staking, governance, burn mechanism active.</li>
               </ul>
 
-              <h3 className="mb-3 font-bold text-foreground">9.2 Supply Distribution</h3>
+              <h3 className="mb-3 font-bold text-foreground">12.2 Supply Distribution</h3>
               <CodeBlock>
 {`Total Supply: 1,000,000,000 TOKEN (fixed)
 
@@ -704,14 +1162,14 @@ Treasury:        10% (100M) - Protocol development
 Liquidity:       10% (100M) - DEX bootstrapping`}
               </CodeBlock>
 
-              <h3 className="mb-3 font-bold text-foreground">9.3 Elastic Release</h3>
+              <h3 className="mb-3 font-bold text-foreground">12.3 Elastic Release</h3>
               <p className="mb-6">
                 TOKEN release is proportional to protocol revenue, preventing death spirals where
                 falling prices cause selling pressure. When revenue drops, fewer tokens release,
                 maintaining price stability. Unstaking requires a 30-day cooldown period.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">9.4 Revenue Flywheel</h3>
+              <h3 className="mb-3 font-bold text-foreground">12.4 Revenue Flywheel</h3>
               <AsciiDiagram>
 {`+------------------------------------------------------+
 |                 REVENUE FLYWHEEL                     |
@@ -744,7 +1202,7 @@ Liquidity:       10% (100M) - DEX bootstrapping`}
 +------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">9.5 Buyback & Burn</h3>
+              <h3 className="mb-3 font-bold text-foreground">12.5 Buyback & Burn</h3>
               <CodeBlock>
 {`Buyback Phases:
 
@@ -765,10 +1223,10 @@ Destination: All bought tokens are burned`}
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 10: BUILD PROTOCOL — RBOB                               */}
+            {/* CHAPTER 13: BUILD PROTOCOL — RBOB                               */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="build-protocol" number="10" title="Build Protocol — RBOB">
-              <h3 className="mb-3 font-bold text-foreground">10.1 The Insight</h3>
+            <Section id="build-protocol" number="13" title="Build Protocol — RBOB">
+              <h3 className="mb-3 font-bold text-foreground">13.1 The Insight</h3>
               <p className="mb-4">
                 Most open-source projects replicate corporate structure with volunteers.
                 Maintainers become bottlenecks. Pull requests wait in queues. Contributors burn out.
@@ -795,7 +1253,7 @@ Destination: All bought tokens are burned`}
                 Veil Protocol takes the same approach to software development.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">10.2 Four Rules</h3>
+              <h3 className="mb-3 font-bold text-foreground">13.2 Four Rules</h3>
               <AsciiDiagram>
 {`+------------------------------------------------------+
 |                    THE FOUR RULES                    |
@@ -825,7 +1283,7 @@ Destination: All bought tokens are burned`}
 +------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">10.3 Repository IS Task Board</h3>
+              <h3 className="mb-3 font-bold text-foreground">13.3 Repository IS Task Board</h3>
               <p className="mb-4">
                 Traditional projects maintain separate task systems: Jira, Linear, GitHub Issues.
                 These require human maintenance. They drift from reality. They become bureaucratic overhead.
@@ -852,7 +1310,7 @@ cat .desired/features.yaml
                 Agents read, understand, implement. No meetings required.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">10.4 Stake as Alignment</h3>
+              <h3 className="mb-3 font-bold text-foreground">13.4 Stake as Alignment</h3>
               <p className="mb-4">
                 Every approval is a bet.
               </p>
@@ -874,7 +1332,7 @@ cat .desired/features.yaml
                 Approvers who approve bugs lose stake. Natural selection for quality.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">10.5 Three Precedents</h3>
+              <h3 className="mb-3 font-bold text-foreground">13.5 Three Precedents</h3>
               <p className="mb-4">
                 This is not theory. Similar systems have built extraordinary things:
               </p>
