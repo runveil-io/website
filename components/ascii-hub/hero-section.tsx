@@ -59,7 +59,7 @@ function TerminalAnimation() {
     '  ✓ Encrypted with X25519',
     '  Quantum computing uses qubits...',
     '  Cost: $0.003 (142 tokens)',
-    '  Provider: anonymous            [OK]',
+    '  Provider: accountless          [OK]',
   ]
 
   useEffect(() => {

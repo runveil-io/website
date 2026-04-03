@@ -16,7 +16,7 @@ export const techSections: TechSection[] = [
     title: "Protocol Design",
     subtitle: "Architecture",
     description:
-      "Three roles. One network. No central authority. Providers share idle AI capacity through relays. Consumers access models anonymously. Everything settles on Solana.",
+      "Three roles. One network. No central authority. Providers share idle AI capacity through relays. Consumers access models through accountless, privacy-preserving routing. Settlement evidence stays on the main path.",
     ascii: `
 ┌─────────────────────────────────────┐
 │       YOUR REQUEST JOURNEY          │
@@ -29,15 +29,15 @@ export const techSections: TechSection[] = [
 │  └──────┘  └────┬────┘  └───────┘  │
 │                 │                   │
 │      ┌──────────┴──────────┐       │
-│      │    SOLANA CHAIN     │       │
-│      │  payment settles    │       │
-│      │  nobody sees both   │       │
+│      │   SETTLEMENT        │       │
+│      │  witness records     │       │
+│      │  (staged)            │       │
 │      └─────────────────────┘       │
 └─────────────────────────────────────┘`,
     specs: [
-      { label: "Cost", value: "~$0.003 per message" },
-      { label: "Latency", value: "+50ms vs direct API" },
-      { label: "Privacy", value: "Nobody sees both who and what" },
+      { label: "Cost", value: "Usage-based (quote units)" },
+      { label: "Latency", value: "Low overhead vs direct API" },
+      { label: "Privacy", value: "Split visibility across roles" },
       { label: "Encryption", value: "X25519 + ChaCha20" },
     ],
     commands: [
@@ -53,14 +53,14 @@ export const techSections: TechSection[] = [
     id: "security-model",
     number: "02",
     title: "Security and Privacy",
-    subtitle: "Trust architecture. Anonymity by design.",
+    subtitle: "Trust architecture. Privacy-preserving by design.",
     description:
-      "Open source. Security by math and economics, not obscurity. Four layers. Each works even if providers modify their code. Identity stripped at source. Zero logging.",
+      "Open source. Security by math and economics, not obscurity. Four layers. Each works even if providers modify their code. Identity coupling reduced through role separation. Split visibility across roles.",
     ascii: ``,
     specs: [
       { label: "Baseline", value: "Math + Economics" },
       { label: "Open Source", value: "MIT License" },
-      { label: "Trust Required", value: "None" },
+      { label: "Trust Model", value: "Role separation" },
       { label: "Auditable", value: "By Anyone" },
     ],
     commands: [],
@@ -89,16 +89,14 @@ export const techSections: TechSection[] = [
     specs: [
       { label: "Protocol", value: "QUIC" },
       { label: "Transport", value: "E2E TLS" },
-      { label: "Latency", value: "<50ms" },
+      { label: "Latency", value: "Low" },
       { label: "Bandwidth", value: "Adaptive" },
     ],
     commands: [
-      "$ npx clawhub@latest install",
-      "> clawd installed successfully",
-      "$ clawd provide start",
-      "> Mining started. Wallet: 7xK2...3mNp",
-      "$ clawd credits add 10",
-      "> Balance: $10.00",
+      "$ npx veil init",
+      "> veil installed successfully",
+      "$ veil start",
+      "> Node started. Ready to route.",
     ],
   },
   {

@@ -155,7 +155,7 @@ function FlywheelDiagram() {
 }
 
 const terminalLines = [
-  "$ clawd build",
+  "$ veil build",
   "Scanning veil-protocol repos...",
   "Found: 2 failing tests, 1 desired state",
   "[1] core — relay timeout not handled",
@@ -191,7 +191,7 @@ function BuildTerminal() {
       <div className="flex items-center gap-2 border-b border-border px-4 py-2">
         <div className="h-1.5 w-1.5 bg-foreground" />
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          clawd build — autonomous development
+          veil build — autonomous development
         </span>
       </div>
       <div className="p-6">
@@ -282,7 +282,7 @@ export function SectionBuild() {
         <FlywheelDiagram />
       </div>
 
-      {/* clawd build terminal */}
+      {/* veil build terminal */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

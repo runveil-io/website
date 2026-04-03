@@ -12,7 +12,7 @@ const sections = [
   { id: "protocol-design", number: "3", title: "Protocol Design" },
   { id: "privacy-architecture", number: "4", title: "Privacy Architecture" },
   { id: "security-model", number: "5", title: "Security Model" },
-  { id: "anti-detection", number: "6", title: "Anti-Detection" },
+  { id: "provider-resilience", number: "6", title: "Provider Operational Resilience" },
   { id: "pricing-engine", number: "7", title: "Pricing Engine" },
   { id: "metering-billing", number: "8", title: "Metering & Billing" },
   { id: "settlement", number: "9", title: "Settlement" },
@@ -130,8 +130,8 @@ export default function WhitepaperPage() {
               </span>
             </div>
             <pre className="font-mono text-xs leading-relaxed text-muted-foreground md:text-sm">
-{`Veil Protocol: A Decentralized AI Inference Network
-with Verifiable Privacy and Market-Driven Pricing
+{`Veil Protocol: An Agent-Operated AI Capacity Marketplace
+with Privacy-Preserving Routing and Staged Settlement
 
 Version 1.1 — April 2026`}
             </pre>
@@ -151,28 +151,27 @@ Version 1.1 — April 2026`}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <Section id="abstract" number="1" title="Abstract">
               <p className="mb-4">
-                Veil Protocol is a decentralized network for AI inference that enables permissionless
-                access to foundation models while preserving user privacy. The protocol connects three
-                participant classes—Providers who share idle AI capacity, Consumers who access models
-                anonymously, and Relays who route traffic for passive rewards—through a trustless
-                architecture secured by cryptographic guarantees, economic incentives, and optional
-                hardware attestation.
+                Veil Protocol is being built as an open-source AI capacity marketplace. The protocol connects three
+                participant classes—Providers who turn spare AI quota into routable execution, Consumers who access models
+                through accountless, privacy-preserving routing, and Relays who broker supply, enforce routing rules,
+                and record witness data—through an architecture designed for split visibility, economic incentives,
+                and staged settlement.
               </p>
               <p className="mb-4">
-                We present a novel pricing mechanism that dynamically adjusts rates based on real-time
-                supply and demand, an optimistic settlement system with fraud proofs for dispute resolution,
-                and a token model with revenue-proportional elastic release that prevents death spirals
-                common in dual-token systems.
+                We present a pricing mechanism based on quote-driven budgeting with a path toward dynamic
+                supply-and-demand adjustment, a staged settlement system progressing from off-chain witness
+                records toward on-chain payout-capable flows, and a contribution model (RBOB) that keeps
+                protocol evolution visible and auditable.
               </p>
               <p className="mb-4">
                 This paper also introduces RBOB (Rules-Based Open Build), a coordination mechanism
                 where autonomous agents contribute to protocol development without human project management.
-                The protocol breathes through two lungs: Inference generates revenue, Build channels
+                The protocol operates through two complementary loops: Inference generates revenue, Build channels
                 that revenue into continuous improvement. Together, they form a self-sustaining system
                 where better infrastructure attracts more usage, which funds more development.
               </p>
               <p>
-                The result is infrastructure that can grow without organizational overhead—a protocol
+                The result is infrastructure designed to grow without organizational overhead—a protocol
                 that builds itself.
               </p>
             </Section>
@@ -185,14 +184,14 @@ Version 1.1 — April 2026`}
               <p className="mb-4">
                 Access to frontier AI models faces three barriers: payment infrastructure (credit cards,
                 geographic restrictions), identity requirements (KYC, phone verification), and privacy
-                concerns (request logging, content moderation). These barriers exclude billions of potential
-                users and create artificial scarcity in a market with abundant computational supply.
+                concerns (request logging, content moderation). These barriers create friction for
+                potential users and introduce artificial scarcity in a market with abundant computational supply.
               </p>
               <p className="mb-6">
                 A researcher in Nigeria cannot access GPT-4 because their country lacks Stripe support.
-                A journalist investigating corruption cannot trust that their queries are not logged.
+                A journalist investigating corruption prefers that their queries are not linked to their identity.
                 A developer building in a restricted category faces arbitrary bans without recourse.
-                These are not edge cases—they represent the majority of the world.
+                These are real access problems that Veil is designed to reduce.
               </p>
 
               <h3 className="mb-3 font-bold text-foreground">2.2 Structural Arbitrage</h3>
@@ -259,31 +258,32 @@ where:
 |                                                     |
 |  CONSUMER            RELAY              PROVIDER    |
 |  +--------+      +----------+       +--------+      |
-|  | clawd  |----->|  BLIND   |------>|  WASM  |      |
-|  |  CLI   |      | FORWARD  |       |SANDBOX |      |
-|  |        |      | +ID STRIP|       |        |      |
+|  | Local  |----->| ROUTING  |------>| EXEC   |      |
+|  |Gateway |      | +WITNESS |       |ENGINE  |      |
+|  |        |      |          |       |        |      |
 |  +--------+      +----+-----+       +--------+      |
 |      |                |                  |          |
-|      |      +---------+---------+       |           |
-|      |      |   SOLANA CHAIN    |       |           |
-|      +----->| +---------------+ |<------+           |
-|             | |Registry|Escrow| |                   |
-|             | |Staking |Token | |                   |
-|             | +---------------+ |                   |
-|             +-------------------+                   |
+|      |    +-----------+------------+    |           |
+|      |    | SETTLEMENT LAYER       |    |           |
+|      +--->| (staged)               |<---+           |
+|           | Day 1: off-chain       |                |
+|           |   witness + quote      |                |
+|           | Future: on-chain       |                |
+|           |   settlement           |                |
+|           +------------------------+                |
 +-----------------------------------------------------+`}
               </AsciiDiagram>
 
               <h3 className="mb-3 font-bold text-foreground">3.2 Three Roles</h3>
               <ul className="mb-6 list-inside list-disc">
-                <li className="mb-2"><strong className="text-foreground">Provider</strong>: Shares idle AI capacity, runs WASM sandbox, earns 80% of transaction value. Providers stake TOKEN to register and face slashing for misbehavior.</li>
-                <li className="mb-2"><strong className="text-foreground">Consumer</strong>: Accesses models via clawd CLI, pays in USDC, identity never leaves local machine. No registration required. Anonymous by default.</li>
-                <li className="mb-2"><strong className="text-foreground">Relay</strong>: Routes traffic, strips identifiers, submits witnesses to chain, earns 10% passively. Relays see who but not what.</li>
+                <li className="mb-2"><strong className="text-foreground">Provider</strong>: Turns spare AI quota or API capacity into routable execution. Earns the majority share of transaction value. <em>[SETTLEMENT DIRECTION] Staking and slashing are part of the staged settlement design.</em></li>
+                <li className="mb-2"><strong className="text-foreground">Consumer</strong>: Accesses models via local gateway, pays through quote-based budget. Accountless by default—no upstream account wiring required for normal usage.</li>
+                <li className="mb-2"><strong className="text-foreground">Relay</strong>: Routes traffic, records witness metadata, enforces routing rules, earns relay fees. Anyone with a VPS can run a Relay—no GPU or AI subscription needed. Relay sees routing and witness metadata, but not prompt plaintext.</li>
               </ul>
 
               <h3 className="mb-3 font-bold text-foreground">3.3 Request Flow</h3>
               <p className="mb-4">
-                Every inference request follows a six-step flow designed to separate identity from content:
+                Every inference request follows a flow designed to split visibility across roles:
               </p>
               <AsciiDiagram>
 {`+------------------------------------------------------+
@@ -293,32 +293,38 @@ where:
 |  1  Consumer encrypts prompt with Provider pubkey    |
 |     Only Provider can read content.                  |
 |                                                      |
-|  2  Relay verifies identity + USDC balance           |
-|     Consumer proves ownership.                       |
+|  2  Relay verifies budget and admission              |
+|     Consumer proves authorization.                   |
 |                                                      |
-|  3  Relay strips identity, forwards to Provider      |
-|     Provider receives request without origin.        |
+|  3  Relay routes to Provider                         |
+|     Provider receives execution payload.             |
 |                                                      |
-|  4  Relay submits settlement witness to Solana       |
-|     On-chain record for later settlement.            |
+|  4  Relay records witness metadata                   |
+|     Off-chain witness for settlement path.           |
 |                                                      |
-|  5  Provider decrypts in WASM/TEE sandbox            |
-|     Inference executes in isolation.                 |
+|  5  Provider decrypts and executes inference         |
+|     Plaintext execution in Provider boundary.        |
 |                                                      |
 |  6  Encrypted response returns to Consumer           |
 |     Same path, reverse direction.                    |
 |                                                      |
-|  "Relay sees who, not what."                         |
-|  "Provider sees what, not who."                      |
+|  Relay sees routing and witness metadata, but not    |
+|  prompt plaintext. Provider sees plaintext execution |
+|  payload, but should not receive unnecessary         |
+|  Consumer-side context.                              |
 |                                                      |
 +------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">3.4 On-Chain Programs</h3>
+              <h3 className="mb-3 font-bold text-foreground">3.4 Settlement Programs <span className="text-xs text-muted-foreground">[SETTLEMENT DIRECTION]</span></h3>
+              <p className="mb-4">
+                The current runtime uses off-chain witness records and quote-based budget guards.
+                The following on-chain programs represent the settlement direction, not current implementation:
+              </p>
               <ul className="mb-4 list-inside list-disc">
-                <li className="mb-2"><strong className="text-foreground">Registry</strong>: Provider/relay registration, capability declaration, pubkey storage</li>
+                <li className="mb-2"><strong className="text-foreground">Registry</strong>: Provider/Relay registration, capability declaration, pubkey storage</li>
                 <li className="mb-2"><strong className="text-foreground">Escrow</strong>: Holds funds during inference, releases after settlement window</li>
-                <li className="mb-2"><strong className="text-foreground">Staking</strong>: Provider/relay stake, slash conditions, unstaking (30-day cooldown)</li>
+                <li className="mb-2"><strong className="text-foreground">Staking</strong>: Provider/Relay stake, slash conditions, unstaking cooldown</li>
                 <li className="mb-2"><strong className="text-foreground">Token</strong>: TOKEN minting, burning, elastic release, governance</li>
               </ul>
             </Section>
@@ -327,31 +333,32 @@ where:
             {/* CHAPTER 4: PRIVACY ARCHITECTURE                                 */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <Section id="privacy-architecture" number="4" title="Privacy Architecture">
-              <h3 className="mb-3 font-bold text-foreground">4.1 Four Privacy Tiers</h3>
+              <h3 className="mb-3 font-bold text-foreground">4.1 Privacy Tiers <span className="text-xs text-muted-foreground">[ROADMAP] Not yet implemented</span></h3>
               <p className="mb-4">
-                Veil Protocol offers four privacy tiers, allowing consumers to choose their
-                tradeoff between cost, latency, and privacy guarantees:
+                Veil Protocol defines four privacy tiers as a design direction, allowing consumers to
+                choose their tradeoff between cost, latency, and privacy guarantees. These tiers are
+                part of the staged roadmap and are not yet available in the current runtime:
               </p>
               <AsciiDiagram>
 {`+------------------------------------------------------------+
-|                    PRIVACY TIERS                           |
+|              PRIVACY TIERS [ROADMAP]                       |
 +------------------------------------------------------------+
 |                                                            |
-|  L3  TEE-ONLY     Hardware isolation. Maximum privacy.     |
+|  L3  TEE-ONLY     Hardware isolation. [PHASE 7]            |
 |  -------------    SGX/SEV attestation required.            |
 |                   Price: 1.2x base. Providers: ~15%.       |
 |                                                            |
 |  L2  TEE-PREFER   Default. Prefers TEE, falls back to      |
-|  -------------    WASM if unavailable. Best balance.       |
+|  -------------    standard execution. [PHASE 7]            |
 |                   Price: 1.0x base. Providers: ~40%.       |
 |                                                            |
-|  L1  ANY          Cheapest. WASM sandbox only.             |
-|  -------------    Economic guarantees (staking/slash).     |
+|  L1  ANY          Cheapest. Standard execution.            |
+|  -------------    Economic guarantees (staged).            |
 |                   Price: 0.8x base. Providers: ~100%.      |
 |                                                            |
-|  L0  ALWAYS-ON    Identity stripped. Zero logging.         |
-|  -------------    Applied to ALL tiers automatically.      |
-|                   No wallet linkage to content. Ever.      |
+|  L0  ALWAYS-ON    Identity coupling reduced through        |
+|  -------------    role separation.                         |
+|                   Applied to ALL tiers automatically.      |
 |                                                            |
 +------------------------------------------------------------+`}
               </AsciiDiagram>
@@ -391,15 +398,16 @@ where:
 {`+------------------+----------+----------+----------+
 | Feature          | Official | Veil Std | Veil TEE |
 +------------------+----------+----------+----------+
-| Identity Logged  | YES      | NO       | NO       |
-| Content Logged   | YES      | NO       | NO       |
-| Account Ban Risk | YES      | NO       | NO       |
-| Content Visible  | PROVIDER | PROVID*  | NOBODY   |
-| Censorship       | YES      | NO       | NO       |
-| Geo-Restriction  | YES      | NO       | NO       |
+| Acct Required    | YES      | NO       | NO       |
+| Content Logged   | YES      | NO*      | NO*      |
+| Account Ban Risk | YES      | REDUCED  | REDUCED  |
+| Content Visible  | PROVIDER | PROVIDER | PROVIDER†|
+| Geo-Restriction  | YES      | REDUCED  | REDUCED  |
 +------------------+----------+----------+----------+
-| * WASM providers can inspect memory.              |
-|   Economic incentives (slashing) align behavior.  |
+| * Relay does not see prompt plaintext; Provider   |
+|   sees execution payload by design.               |
+| † TEE hardware isolation is a Phase 7 exploration |
+|   goal, not a current guarantee.                  |
 +---------------------------------------------------+`}
               </AsciiDiagram>
             </Section>
@@ -410,41 +418,42 @@ where:
             <Section id="security-model" number="5" title="Security Model">
               <h3 className="mb-3 font-bold text-foreground">5.1 Threat Model</h3>
               <p className="mb-4">
-                We assume all participants are potentially malicious. Providers may modify code,
-                relay operators may collude, and consumers may attempt to avoid payment. The protocol
-                must remain secure under these assumptions.
+                We assume all participants are potentially adversarial. Providers may inspect content,
+                relay operators may correlate metadata, and consumers may attempt to avoid payment. The protocol
+                must remain functional under these assumptions.
               </p>
               <p className="mb-6">
-                Specifically, we defend against: provider content inspection (TEE), provider response
-                manipulation (verification), relay-provider collusion (identity separation), consumer
-                payment evasion (escrow), and denial of service (stake requirements).
+                Specifically, we defend against: provider response manipulation (verification),
+                relay-provider collusion (role separation and split visibility), consumer
+                payment evasion (budget guards), and denial of service (admission controls).
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">5.2 Four-Layer Defense</h3>
+              <h3 className="mb-3 font-bold text-foreground">5.2 Defense Layers</h3>
               <AsciiDiagram>
 {`+----------------------------------------------------------+
-| Layer 4: HARDWARE TEE                                    |
+| Layer 4: HARDWARE TEE [PHASE 7 EXPLORATION]              |
 |   Intel SGX / AMD SEV attestation                        |
-|   Bypass: Impossible (with TEE hardware)                 |
+|   Status: Not in current runtime                         |
 +----------------------------------------------------------+
-| Layer 3: GAME THEORY                                     |
+| Layer 3: GAME THEORY [SETTLEMENT STAGE]                  |
 |   Stake slashing, watchtower network                     |
-|   Bypass: Economically irrational                        |
+|   Status: Design direction, not yet deployed             |
 +----------------------------------------------------------+
-| Layer 2: ON-CHAIN                                        |
-|   Escrow contracts, fraud proofs                         |
-|   Bypass: Impossible (Solana consensus)                  |
+| Layer 2: WITNESS + SETTLEMENT [STAGED]                   |
+|   Off-chain witness records, budget guards               |
+|   Future: on-chain escrow, fraud proofs                  |
 +----------------------------------------------------------+
-| Layer 1: CRYPTOGRAPHY                                    |
+| Layer 1: CRYPTOGRAPHY [CURRENT]                          |
 |   X25519 key exchange, ChaCha20-Poly1305                 |
 |   Ed25519 signatures                                     |
 |   Bypass: Impossible (mathematical)                      |
 +----------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">5.3 WASM Sandbox</h3>
+              <h3 className="mb-3 font-bold text-foreground">5.3 Execution Isolation <span className="text-xs text-muted-foreground">[DESIGN DIRECTION] Not in current runtime</span></h3>
               <p className="mb-4">
-                Every provider runs inference inside a WebAssembly sandbox that provides:
+                The design direction includes a WebAssembly sandbox for Provider-side execution isolation.
+                This is not part of the current runtime. When implemented, it would provide:
               </p>
               <ul className="mb-4 list-inside list-disc">
                 <li className="mb-2"><strong className="text-foreground">Memory isolation</strong>: No access to host memory outside sandbox</li>
@@ -453,7 +462,7 @@ where:
                 <li className="mb-2"><strong className="text-foreground">No network access</strong>: Sandbox cannot phone home</li>
               </ul>
               <CodeBlock>
-{`// WASM sandbox initialization
+{`// [DESIGN DIRECTION] WASM sandbox initialization
 const sandbox = await WasmSandbox.create({
   memoryLimit: 4 * GB,
   cpuLimit: 60_000,      // 60 seconds max
@@ -470,86 +479,70 @@ const result = await sandbox.execute(
 
               <h3 className="mb-3 font-bold text-foreground">5.4 Honest Disclosure</h3>
               <p>
-                Without TEE hardware, providers can theoretically read inference content. The WASM
-                sandbox prevents code execution attacks but not memory inspection. We rely on economic
-                incentives (slashing) and reputation systems for WASM-only providers. TEE-enabled
-                providers offer hardware-enforced isolation. Users who require absolute privacy should
-                select L3 (TEE-ONLY) tier.
+                Providers see plaintext execution payloads by design—this is inherent to the current
+                architecture. Role separation reduces identity coupling, but does not eliminate Provider
+                visibility into request content. TEE-based hardware isolation is a Phase 7 exploration
+                goal, not a current guarantee. Users should understand that Veil provides accountless
+                access and privacy-preserving routing, not guaranteed anonymity against all observers.
               </p>
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* CHAPTER 6: ANTI-DETECTION                                       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="anti-detection" number="6" title="Anti-Detection">
-              <h3 className="mb-3 font-bold text-foreground">6.1 The Detection Problem</h3>
+            <Section id="provider-resilience" number="6" title="Provider Operational Resilience">
+              <h3 className="mb-3 font-bold text-foreground">6.1 Supply Continuity</h3>
               <p className="mb-4">
-                AI providers actively detect and ban accounts that share access. Detection methods
-                include usage pattern analysis, IP fingerprinting, and behavioral heuristics. A naive
-                protocol would quickly exhaust available accounts.
+                Providers in the Veil network operate as supply-side participants with upstream
+                capacity sources (API keys, quota allocations, or self-hosted models). Operational
+                resilience means maintaining service availability despite upstream disruptions—
+                quota exhaustion, rate limits, service outages, or credential rotation.
               </p>
               <p className="mb-6">
-                Veil Protocol addresses this through graceful degradation. When accounts are suspended,
-                the network routes around them automatically. Availability is maintained even under
-                aggressive detection. The goal is not to prevent all detection but to make the network
-                resilient to it.
+                The protocol is designed so that when one upstream source becomes unavailable,
+                the Provider can route through remaining sources automatically. Availability is
+                maintained through redundancy and graceful degradation, not through any single
+                upstream dependency.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">6.2 Multi-Account Pooling</h3>
+              <h3 className="mb-3 font-bold text-foreground">6.2 Multi-Source Management</h3>
               <p className="mb-4">
-                Providers register multiple accounts and distribute traffic across them using weighted
-                round-robin. Identity is decoupled from request patterns.
+                Providers may manage multiple upstream capacity sources to improve availability
+                and throughput. The runtime supports distributing requests across available sources
+                based on health, capacity, and cost.
               </p>
-              <CodeBlock>
-{`// Account pool configuration
-accounts: [
-  { id: "acct_1", weight: 0.4, status: "active" },
-  { id: "acct_2", weight: 0.3, status: "active" },
-  { id: "acct_3", weight: 0.3, status: "cooldown" }
-]
-
-// Request routing
-account = selectByWeight(activeAccounts);
-executeRequest(account, encryptedPrompt);`}
-              </CodeBlock>
-
-              <h3 className="mb-3 font-bold text-foreground">6.3 Natural Rhythm Scheduling</h3>
-              <p className="mb-4">
-                Requests are scheduled to mimic human usage patterns:
+              <p className="mb-6">
+                When a source becomes unavailable (quota exhausted, rate limited, or erroring),
+                it is removed from the active rotation and traffic is redistributed to healthy sources.
+                This is standard high-availability practice for any multi-source service.
               </p>
-              <ul className="mb-6 list-inside list-disc">
-                <li className="mb-2"><strong className="text-foreground">Variable delays</strong>: Random intervals between requests (not uniform)</li>
-                <li className="mb-2"><strong className="text-foreground">Session patterns</strong>: Burst activity followed by idle periods</li>
-                <li className="mb-2"><strong className="text-foreground">Quiet periods</strong>: Reduced activity during off-hours</li>
-                <li className="mb-2"><strong className="text-foreground">Typing simulation</strong>: Gradual token streaming, not instant dumps</li>
-              </ul>
 
-              <h3 className="mb-3 font-bold text-foreground">6.4 Automatic Failover</h3>
+              <h3 className="mb-3 font-bold text-foreground">6.3 Automatic Failover</h3>
               <p className="mb-4">
-                When an account is suspended, the system responds automatically:
+                When an upstream source becomes unavailable, the system responds automatically:
               </p>
               <AsciiDiagram>
 {`+------------------------------------------------------------+
 |                  AUTOMATIC FAILOVER                        |
 +------------------------------------------------------------+
 |                                                            |
-|  1. Account suspended (detected via API error)             |
+|  1. Upstream source unavailable (API error / quota)        |
 |     ↓                                                      |
-|  2. Remove from active pool immediately                    |
+|  2. Remove from active source pool                         |
 |     ↓                                                      |
-|  3. Redistribute weight to remaining accounts              |
+|  3. Redistribute load to remaining sources                 |
 |     ↓                                                      |
-|  4. Continue serving requests (no downtime)                |
+|  4. Continue serving requests (no consumer downtime)       |
 |     ↓                                                      |
-|  5. Provider reputation unchanged                          |
-|     (account loss is expected operational cost)            |
+|  5. Provider reliability score maintained                  |
+|     (source rotation is expected operational behavior)     |
 |                                                            |
 +------------------------------------------------------------+`}
               </AsciiDiagram>
               <p>
-                Providers are not penalized for account suspension—it is an expected operational cost.
-                Reputation is based on service quality, not account longevity. This incentivizes providers
-                to maintain pools rather than risk everything on single accounts.
+                Provider reliability is measured by service quality to Consumers, not by the
+                longevity of any individual upstream source. Maintaining multiple sources is a
+                standard operational practice that improves both availability and throughput.
               </p>
             </Section>
 
@@ -557,7 +550,7 @@ executeRequest(account, encryptedPrompt);`}
             {/* CHAPTER 7: PRICING ENGINE                                       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <Section id="pricing-engine" number="7" title="Pricing Engine">
-              <h3 className="mb-3 font-bold text-foreground">7.1 Surge Pricing Formula</h3>
+              <h3 className="mb-3 font-bold text-foreground">7.1 Surge Pricing Formula <span className="text-xs text-muted-foreground">[DESIGN SPECIFICATION — Implementation staged]</span></h3>
               <CodeBlock>
 {`P(t) = P_base × S(t)
 
@@ -622,8 +615,8 @@ surge = EMA(demand / aggregate_capacity)
               <p className="mb-4">
                 Every inference request must answer four questions: How many tokens were consumed?
                 How much should the consumer pay? How is revenue distributed? Who verifies the numbers?
-                Veil Protocol solves this with provider-side metering, relay witnessing, and on-chain
-                challenge mechanisms.
+                Veil Protocol solves this with provider-side metering, relay witnessing, and
+                staged challenge mechanisms.
               </p>
               <p className="mb-6">
                 The core challenge is that different AI APIs report usage in incompatible formats.
@@ -692,7 +685,7 @@ Normalization Map:
                 use local tokenizer estimation, marked as estimated with a &plusmn;10% challenge threshold.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">8.4 Pricing Formula</h3>
+              <h3 className="mb-3 font-bold text-foreground">8.4 Pricing Formula <span className="text-xs text-muted-foreground">[DESIGN SPECIFICATION — Implementation staged]</span></h3>
               <CodeBlock>
 {`consumer_cost = (input_tokens  x model_input_price
               + output_tokens x model_output_price) / 1,000,000
@@ -765,45 +758,45 @@ Market naturally optimizes for cache efficiency.`}
             {/* CHAPTER 9: SETTLEMENT                                           */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <Section id="settlement" number="9" title="Settlement">
-              <h3 className="mb-3 font-bold text-foreground">9.1 Optimistic Model</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.1 Settlement Model</h3>
               <p className="mb-4">
-                Veil Protocol uses optimistic settlement—transactions are assumed valid unless challenged.
-                This reduces on-chain overhead dramatically: only one witness per batch is submitted,
-                rather than individual transaction proofs.
+                Veil uses a staged settlement approach. The current runtime operates with off-chain
+                witness records and quote-based budget guards. The direction is toward optimistic
+                settlement where transactions are assumed valid unless challenged.
               </p>
               <p className="mb-6">
-                The model is inspired by optimistic rollups but adapted for inference workloads.
-                Most settlements complete without challenge. The fraud proof system exists for the
-                rare cases where disputes arise.
+                The target model is inspired by optimistic rollups but adapted for inference workloads.
+                Witness-backed records exist so usage and settlement can be reconciled. The fraud
+                proof system is part of the settlement stage direction.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">9.2 Settlement Flow</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.2 Settlement Flow <span className="text-xs text-muted-foreground">[SETTLEMENT STAGE]</span></h3>
               <AsciiDiagram>
 {`+------------------------------------------------------+
-|                  SETTLEMENT FLOW                     |
+|              SETTLEMENT FLOW (staged)                |
 +------------------------------------------------------+
 |                                                      |
-|  REQUEST           PROCESS           WITNESS         |
-|  ------>           ------>           ------>         |
-|  Consumer          Provider          Relay           |
-|  sends USDC        executes          submits         |
-|  to escrow         inference         to chain        |
+|  CURRENT STATE (Day 1):                              |
+|    Consumer --- budget guard ---> Relay               |
+|    Provider executes inference                        |
+|    Relay records off-chain witness                    |
+|    Quote-based accounting, no on-chain escrow         |
 |                                                      |
-|                24-HOUR WINDOW                          |
-|  +------------------------------------------------+  |
-|  | Challenge period. Submit fraud proof if any.   |  |
-|  | If challenged: arbitration. Else: auto-release |  |
-|  +------------------------------------------------+  |
+|  DIRECTION (Settlement Stage):                       |
+|    Consumer sends USDC to escrow                      |
+|    Provider executes, Relay submits witness            |
+|    24-hour challenge window                            |
+|    Auto-release after window                           |
 |                                                      |
-|                     RELEASE                          |
+|  TARGET DISTRIBUTION:                                |
 |  PROVIDER: 80%    RELAY: 10%    TREASURY: 10%        |
 |                                                      |
 +------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">9.3 Fraud Proofs</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.3 Fraud Proofs <span className="text-xs text-muted-foreground">[SETTLEMENT STAGE]</span></h3>
               <p className="mb-4">
-                Three categories of fraud can be proven on-chain:
+                Three categories of fraud are addressed in the settlement direction:
               </p>
               <ul className="mb-4 list-inside list-disc">
                 <li className="mb-2"><strong className="text-foreground">Quality fraud</strong>: Response does not match request (wrong model, truncated output)</li>
@@ -811,11 +804,11 @@ Market naturally optimizes for cache efficiency.`}
                 <li className="mb-2"><strong className="text-foreground">Non-delivery</strong>: Payment taken but no response provided</li>
               </ul>
               <p className="mb-6">
-                A decentralized watchtower network automatically monitors for fraud and submits proofs.
-                Watchtowers earn 30% of slashed amounts as incentive.
+                In the settlement stage direction, a watchtower network would monitor for fraud and submit proofs.
+                Watchtowers would earn a share of slashed amounts as incentive.
               </p>
 
-              <h3 className="mb-3 font-bold text-foreground">9.4 Escalating Slash</h3>
+              <h3 className="mb-3 font-bold text-foreground">9.4 Escalating Slash <span className="text-xs text-muted-foreground">[SETTLEMENT STAGE]</span></h3>
               <CodeBlock>
 {`Slash Schedule (per provider):
 
@@ -1044,10 +1037,10 @@ Scoring impact:
             <Section id="consumer-integration" number="11" title="Consumer Integration">
               <h3 className="mb-3 font-bold text-foreground">11.1 Local Gateway Architecture</h3>
               <p className="mb-4">
-                The Veil consumer runs as a local HTTP gateway on localhost:4000, fully compatible
-                with the LiteLLM/OpenAI API protocol. Any application that speaks the OpenAI API
+                The Veil consumer runs as a local HTTP gateway, fully compatible
+                with the OpenAI API protocol. Any application that speaks the OpenAI API
                 format—Cursor, VS Code Copilot, custom scripts—can use Veil without code changes.
-                Just point the base URL to localhost:4000.
+                Just point the base URL to the local gateway.
               </p>
               <AsciiDiagram>
 {`+------------------------------------------------------+
@@ -1075,8 +1068,8 @@ Scoring impact:
 |  |    5. Decrypt response, return as OpenAI fmt   |  |
 |  +------------------------------------------------+  |
 |                                                      |
-|  Privacy: Request content never leaves your machine  |
-|  in plaintext. Only the Provider can decrypt.        |
+|  Privacy: Request content is encrypted before       |
+|  leaving your machine. Only the Provider can decrypt.|
 |                                                      |
 +------------------------------------------------------+`}
               </AsciiDiagram>
@@ -1348,12 +1341,12 @@ cat .desired/features.yaml
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 11: WALLET & ONBOARDING                                 */}
+            {/* CHAPTER 14: WALLET & ONBOARDING                                 */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="wallet-onboarding" number="11" title="Wallet & Onboarding">
-              <h3 className="mb-3 font-bold text-foreground">11.1 Device Encryption</h3>
+            <Section id="wallet-onboarding" number="14" title="Wallet & Onboarding">
+              <h3 className="mb-3 font-bold text-foreground">14.1 Device Encryption</h3>
               <p className="mb-4">
-                The clawd wallet stores keys in device secure enclave (Keychain on macOS, Credential
+                The consumer gateway stores keys in the device secure enclave (Keychain on macOS, Credential
                 Manager on Windows, libsecret on Linux). Keys never exist in plaintext on disk.
               </p>
               <CodeBlock>
@@ -1364,7 +1357,7 @@ Linux:    libsecret (kernel keyring)
 Mobile:   iOS Keychain / Android Keystore`}
               </CodeBlock>
 
-              <h3 className="mb-3 font-bold text-foreground">11.2 Progressive Backup</h3>
+              <h3 className="mb-3 font-bold text-foreground">14.2 Progressive Backup</h3>
               <p className="mb-4">
                 Backup requirements scale with balance:
               </p>
@@ -1388,7 +1381,7 @@ Mobile:   iOS Keychain / Android Keystore`}
 +------------------------------------------------------------+`}
               </AsciiDiagram>
 
-              <h3 className="mb-3 font-bold text-foreground">11.3 Three-Tier Architecture</h3>
+              <h3 className="mb-3 font-bold text-foreground">14.3 Three-Tier Architecture</h3>
               <ul className="mb-4 list-inside list-disc">
                 <li className="mb-2"><strong className="text-foreground">Hot wallet</strong>: Daily spending. Small balance. Device-local keys.</li>
                 <li className="mb-2"><strong className="text-foreground">Warm wallet</strong>: Staking. Moderate balance. Cloud backup required.</li>
@@ -1401,76 +1394,110 @@ Mobile:   iOS Keychain / Android Keystore`}
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 12: ROADMAP                                             */}
+            {/* CHAPTER 15: ROADMAP                                             */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="roadmap" number="12" title="Roadmap">
+            <Section id="roadmap" number="15" title="Roadmap">
+              <p className="mb-4">
+                Veil follows a staged delivery order. Each phase leaves the system more operable
+                and more verifiable than before. The roadmap preserves five parallel outcomes:
+                Access, Privacy, Market, Automation, and Settlement.
+              </p>
               <AsciiDiagram>
 {`+------------------------------------------------------+
-|  Timeline                                            |
-|  ------------------------------------------------    |
+|  ROADMAP: SEVEN PHASES                               |
++------------------------------------------------------+
 |                                                      |
-|  M0        M1        M2-3      M4-6      M6+         |
-|  |         |         |         |         |           |
-|  v         v         v         v         v           |
-|  +-------+ +-------+ +-------+ +-------+ +-------+   |
-|  |TESTNET| |MAINNET| |  TGE  | |STAKING| |  DAO  |   |
-|  |       | | BETA  | |       | |       | |       |   |
-|  |clawd  | |Provid.| |Points | |Full   | |On-    |   |
-|  |CLI +  | |Network| |convert| |token  | |chain  |   |
-|  |relay  | |Launch | |→TOKEN | |economy| |govern |   |
-|  +-------+ +-------+ +-------+ +-------+ +-------+   |
+|  Phase 1: Reliable Runtime Baseline                  |
+|    Stabilize Consumer gateway, Relay-to-Provider     |
+|    forwarding, witness and budget flows.              |
+|                                                      |
+|  Phase 2: Discovery & Multi-Relay Reachability       |
+|    Bootstrap, Relay discovery, multi-Relay support,   |
+|    better Provider reachability for Consumers.        |
+|                                                      |
+|  Phase 3: Guided Operator Automation                 |
+|    Runtime hardening, health management, Claw-managed |
+|    join and startup flow for operators.               |
+|                                                      |
+|  Phase 4: Autonomous Marketplace Control             |
+|    Replay protection, request contracts, policy-      |
+|    driven capacity publication and pricing.           |
+|                                                      |
+|  Phase 5: Witness-Backed Settlement                  |
+|    Settlement interfaces, quote vs settlement asset   |
+|    separation, crypto-native payment rails.           |
+|                                                      |
+|  Phase 6: Low-Touch Market Operation                 |
+|    Near-autonomous Provider operation via Claw,       |
+|    automated repricing and risk envelopes.            |
+|                                                      |
+|  Phase 7: Optional Advanced Privacy Profile          |
+|    Explore stronger privacy (TEE) only after the     |
+|    marketplace loop works operationally.              |
 |                                                      |
 +------------------------------------------------------+`}
               </AsciiDiagram>
+              <p className="mb-4">
+                <strong className="text-foreground">North Star:</strong> Tell Claw to join the network.
+                Tell Claw to start selling available inference capacity. Let the system keep the node
+                online, priced, routed, witnessed, and recoverable with minimal manual intervention.
+              </p>
+              <p>
+                <strong className="text-foreground">Planning tracks:</strong> Autopilot (remove manual node lifecycle work),
+                Marketplace (turn capacity into sellable supply), Settlement (from witness records to
+                payout-capable flows), Privacy (keep accountless routing while the market loop grows).
+              </p>
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 13: RELATED WORK                                        */}
+            {/* CHAPTER 16: RELATED WORK                                        */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="related-work" number="13" title="Related Work">
+            <Section id="related-work" number="16" title="Related Work">
               <AsciiDiagram>
 {`                    Veil       API        GPU      Informal
 Feature             Protocol   Aggregators Markets  Sharing
 ------------------- ---------- ---------- -------- ---------
-Permissionless      YES        NO         YES      YES
-Privacy preserving  YES        NO         PARTIAL  TRUST
-Crypto payments     YES        SOME       YES      NO
-Censorship resist   YES        NO         YES      NO
-Quality guarantee   YES        YES        NO       NO
-Price discovery     DYNAMIC    FIXED      AUCTION  NONE`}
+Accountless access  YES        NO         PARTIAL  YES
+Privacy-preserving  YES        NO         PARTIAL  TRUST
+Crypto payments     STAGED     SOME       YES      NO
+Reduced geo-block   YES        NO         YES      NO
+Quality guarantee   STAGED     YES        NO       NO
+Price discovery     STAGED     FIXED      AUCTION  NONE`}
               </AsciiDiagram>
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 14: CONCLUSION                                          */}
+            {/* CHAPTER 17: CONCLUSION                                          */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="conclusion" number="14" title="Conclusion">
+            <Section id="conclusion" number="17" title="Conclusion">
               <p className="mb-4">
-                Veil is not a product. It is a protocol—a set of rules that enable permissionless
-                AI access without central authority.
+                Veil is being built as an open-source AI capacity marketplace—a protocol that enables
+                accountless AI access through privacy-preserving routing and a staged settlement path.
               </p>
               <p className="mb-4">
-                The code is open source. The network is operated by its participants. The treasury
-                is governed by token holders. The protocol builds itself through RBOB.
+                The code is open source. The network is operated by its participants. The contribution
+                loop is tracked through RBOB. Settlement, governance, and market operations are being
+                staged through a deliberate roadmap.
               </p>
               <p className="mb-4">
-                Two lungs breathe as one: inference generates revenue, build makes it better. Together,
-                they form a self-sustaining system where better infrastructure attracts more usage,
-                which funds more development, which creates better infrastructure.
+                Two complementary loops drive the system: inference generates revenue, build channels
+                that revenue into improvement. Together, they form a self-sustaining system where
+                better infrastructure attracts more usage, which funds more development.
               </p>
               <p className="mb-4">
-                We believe AI access should be as open as internet access. No credit cards. No KYC.
-                No content moderation. No geographic restrictions. Just rules and verification.
+                We believe AI access should be as open as internet access. Lower friction. Accountless
+                by default. Privacy-preserving routing. Market-driven pricing. Rules and verification
+                over organizational overhead.
               </p>
               <p>
-                Your clawd is the next contributor.
+                The protocol is building itself.
               </p>
             </Section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* CHAPTER 15: REFERENCES                                          */}
+            {/* CHAPTER 18: REFERENCES                                          */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <Section id="references" number="15" title="References">
+            <Section id="references" number="18" title="References">
               <ol className="list-inside list-decimal">
                 <li className="mb-2">Nakamoto, S. (2008). Bitcoin: A Peer-to-Peer Electronic Cash System.</li>
                 <li className="mb-2">Buterin, V. (2014). Ethereum: A Next-Generation Smart Contract Platform.</li>

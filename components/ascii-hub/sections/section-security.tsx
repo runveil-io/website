@@ -19,7 +19,7 @@ const securityLayers = [
   },
   {
     layer: "Layer 2",
-    name: "ON-CHAIN",
+    name: "ON-CHAIN [Staged]",
     components: ["Escrow Contracts", "Fraud Proofs"],
     bypass: "Impossible",
     coverage: 100,
@@ -35,7 +35,7 @@ const securityLayers = [
   },
   {
     layer: "Layer 4",
-    name: "HARDWARE TEE",
+    name: "HARDWARE TEE [Phase 7]",
     components: ["Intel SGX", "AMD SEV"],
     bypass: "Impossible (with TEE)",
     coverage: 100,
@@ -47,14 +47,14 @@ const securityLayers = [
 const privacyLayers = [
   {
     id: "L3",
-    name: "TEE-ONLY",
-    description: "Hardware-encrypted processing. Even root can't read enclave data.",
+    name: "TEE-ONLY [Roadmap]",
+    description: "Hardware-encrypted processing. Even root can't read enclave data. Available when TEE providers join the network.",
     badge: "Maximum Security",
   },
   {
     id: "L2",
-    name: "TEE-PREFERRED",
-    description: "Routes to TEE when available, falls back to WASM. Default mode for balanced privacy and availability.",
+    name: "TEE-PREFERRED [Roadmap]",
+    description: "Routes to TEE when available, falls back to WASM. Default mode for balanced privacy and availability. TEE routing available when hardware providers join.",
     badge: "Default",
   },
   {
@@ -66,7 +66,7 @@ const privacyLayers = [
   {
     id: "L0",
     name: "ALWAYS ON",
-    description: "Identity stripping + random routing. Applied to ALL levels as the base privacy layer.",
+    description: "Accountless access + privacy-preserving routing. Applied to ALL levels as the base privacy layer.",
     badge: "Base Layer",
   },
 ]
@@ -302,12 +302,13 @@ function ComparisonTable() {
           className="font-mono text-[10px] leading-relaxed text-muted-foreground md:text-xs"
         >
 {`                Official  Veil     Veil
-Feature         API       Standard TEE
+Feature         API       Standard TEE*
 ──────────────  ────────  ───────  ───────
 Knows identity  YES       NO       NO
-Logs requests   YES       NO       NO
+Logs requests   YES       WITNESS  NO
 Can ban you     YES       NO       NO
-Content protect TRUST     ECON     HARDWARE`}
+Content protect TRUST     ECON     HARDWARE
+* TEE tier is on the roadmap`}
         </motion.pre>
       </div>
     </div>
@@ -344,10 +345,10 @@ function PrivacyTab() {
             </div>
             <div className="grid grid-cols-2 gap-0">
               {[
-                { label: "Identity", value: "Stripped" },
+                { label: "Identity", value: "Accountless" },
                 { label: "Content", value: "Tier-dependent" },
-                { label: "Logging", value: "None" },
-                { label: "Tracking", value: "Impossible" },
+                { label: "Logging", value: "Minimal (witness only)" },
+                { label: "Tracking", value: "Reduced coupling" },
               ].map((spec, i) => (
                 <div
                   key={spec.label}

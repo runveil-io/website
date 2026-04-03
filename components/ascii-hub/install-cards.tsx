@@ -114,12 +114,12 @@ export function InstallCards() {
           title="PROVIDE & EARN"
           description="Share idle AI capacity. Earn USDC + TOKEN rewards."
           commandByPm={{
-            npm: "$ npx clawhub@latest install idle-provide",
-            pnpm: "$ pnpm dlx clawhub@latest install idle-provide",
-            bun: "$ bunx clawhub@latest install idle-provide",
+            npm: "$ npx veil init --provider",
+            pnpm: "$ pnpm dlx veil init --provider",
+            bun: "$ bunx veil init --provider",
           }}
           command=""
-          belowText="Then run: clawd provide start"
+          belowText="Then run: veil provide start"
           delay={0.1}
         />
 
@@ -127,14 +127,14 @@ export function InstallCards() {
         <InstallCard
           icon=">"
           title="USE AI"
-          description="Access top AI models. No KYC. Pay with crypto."
+          description="Access top AI models. No KYC. Pay with crypto (staged)."
           commandByPm={{
-            npm: "$ npx clawhub@latest install idle-consume",
-            pnpm: "$ pnpm dlx clawhub@latest install idle-consume",
-            bun: "$ bunx clawhub@latest install idle-consume",
+            npm: "$ npx veil init",
+            pnpm: "$ pnpm dlx veil init",
+            bun: "$ bunx veil init",
           }}
           command=""
-          belowText="Then run: clawd credits add 10"
+          belowText="Then run: veil start"
           delay={0.2}
         />
 
@@ -142,11 +142,12 @@ export function InstallCards() {
         <InstallCard
           icon=">"
           title="RUN A RELAY"
-          description="Support the network. Earn TOKEN passively."
-          command={`$ clawd setup
+          description="Earn relay fees with a $3/month VPS. No GPU needed."
+          command={`$ veil relay start --public
 
-Join the Veil network? [Y/n] Y`}
-          belowText="Enabled by default in clawd"
+✓ Registered with bootstrap
+✓ Earning relay fees...`}
+          belowText="Anyone with a VPS can relay traffic and earn"
           showPmTabs={false}
           delay={0.3}
         />

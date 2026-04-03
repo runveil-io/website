@@ -101,29 +101,28 @@ const installTabs = [
   {
     id: "provide",
     label: "PROVIDE",
-    code: `# Share idle AI capacity, earn USDC + TOKEN
+    code: `# Share idle AI capacity
 
-$ npx clawhub@latest install idle-provide
-$ clawd provide start
+$ npx veil init --provider
+$ veil provide start
 
-> Mining started.
+> Provider registered.
 > Wallet: 7xK2...3mNp (auto-created)
 > Models: claude-sonnet, claude-opus
-> Status: EARNING
+> Status: ONLINE
 > _`,
   },
   {
     id: "consume",
     label: "CONSUME",
-    code: `# Access AI models with crypto
+    code: `# Access AI models — accountless, privacy-preserving
 
-$ npx clawhub@latest install idle-consume
-$ clawd credits add 10
+$ npx veil init
+$ veil start
 
-> Balance: $10.00
-> Local gateway: http://localhost:7860/v1
+> Local gateway: http://localhost:4000/v1
 > Use this URL in Cursor/Windsurf/any OpenAI client
-> Privacy: TEE-preferred
+> Privacy: split visibility (accountless routing)
 > Status: READY`,
   },
   {

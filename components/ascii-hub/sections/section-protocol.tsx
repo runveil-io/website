@@ -10,14 +10,14 @@ const flowSteps = [
   { num: "1", text: "Consumer encrypts prompt, sends to Relay" },
   { num: "2", text: "Relay verifies identity + balance" },
   { num: "3", text: "Relay strips identity, forwards to Provider" },
-  { num: "4", text: "Relay submits settlement witness on-chain" },
+  { num: "4", text: "Relay records settlement witness" },
   { num: "5", text: "Provider processes in WASM sandbox, returns result" },
   { num: "6", text: "Result returned to Consumer via Relay" },
 ]
 
 const stats = [
   { label: "Providers Online", value: "1 (testnet)" },
-  { label: "Relays Active", value: "1 (testnet)" },
+  { label: "Relays", value: "Community-run" },
   { label: "Tests Passing", value: "36/36" },
   { label: "Models Available", value: "12" },
 ]
@@ -114,8 +114,8 @@ function ArchitectureFlow() {
           <div className="relative flex flex-col items-center">
             <div className="h-8 w-px border-l border-dashed border-foreground" />
             <div className="flex h-16 w-32 flex-col items-center justify-center border border-foreground bg-secondary/50">
-              <span className="font-mono text-xs font-bold">SOLANA</span>
-              <span className="font-mono text-[9px] text-muted-foreground">CHAIN</span>
+              <span className="font-mono text-xs font-bold">SETTLEMENT</span>
+              <span className="font-mono text-[9px] text-muted-foreground">(staged)</span>
             </div>
             <span className="mt-1 font-mono text-[10px] text-muted-foreground">Settlement</span>
           </div>
@@ -192,7 +192,7 @@ function ArchitectureFlow() {
           <span className="font-mono text-[10px] text-muted-foreground">Settlement Layer</span>
           <div className="h-4 w-px border-l border-dashed border-foreground" />
           <div className="flex h-16 w-full max-w-xs flex-col items-center justify-center border border-foreground bg-secondary/50">
-            <span className="font-mono text-xs font-bold">SOLANA CHAIN</span>
+            <span className="font-mono text-xs font-bold">SETTLEMENT (staged)</span>
           </div>
         </motion.div>
       </div>
@@ -209,11 +209,11 @@ function BootSequence() {
     "[  0.000012] Loading cryptographic modules...",
     "[  0.000034] X25519 key exchange: READY",
     "[  0.000089] ChaCha20-Poly1305: READY",
-    "[  0.001204] Connecting to Solana mainnet...",
-    "[  0.002100] Registry program: verified",
-    "[  0.003400] Escrow program: verified",
-    "[  0.004200] Staking program: verified",
-    "[  0.005100] Loading relay nodes...",
+    "[  0.001204] Connecting to relay network...",
+    "[  0.002100] Bootstrap discovery: OK",
+    "[  0.003400] Relay handshake: OK",
+    "[  0.004200] Witness module: READY",
+    "[  0.005100] Loading provider routes...",
     "[  OK  ] Protocol ready. Testnet operational.",
   ]
 

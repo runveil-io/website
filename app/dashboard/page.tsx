@@ -10,7 +10,7 @@ const terminalLines = [
   "> loading on-chain data...",
   "> status: COMING SOON",
   "> dashboard launches with protocol v1.0",
-  "> for now, use: clawd provide status",
+  "> for now, use: veil provide status",
   "> _█",
 ]
 
@@ -104,7 +104,7 @@ export default function DashboardPage() {
           </p>
           <div className="border border-border px-4 py-3 inline-block bg-muted/10">
             <code className="font-mono text-sm text-foreground">
-              clawd provide status
+              veil provide status
             </code>
           </div>
         </div>
